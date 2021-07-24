@@ -17,11 +17,14 @@ class MyApp extends StatelessWidget {
           child: RandomWords(),
         ),
       ),
+      theme: ThemeData(
+        primaryColor: Colors.white,
+      ),
     );
   }
 }
 
-class RandomWordsState extends State<RandomWords> {
+class _RandomWordsState extends State<RandomWords> {
   final _suggestions = <WordPair>[];
   final _biggerFont = const TextStyle(fontSize: 18.0);
   final _saved = <WordPair>{};
@@ -30,9 +33,32 @@ class RandomWordsState extends State<RandomWords> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Start Gen'),
+        actions: [IconButton(onPressed: _pushSaved, icon: Icon(Icons.list))],
       ),
       body: _buildSuggestions(),
     );
+  }
+
+  void _pushSaved() {
+    Navigator.of(context)
+        .push(MaterialPageRoute<void>(builder: (BuildContext context) {
+      final tiles = _saved.map((WordPair pair) {
+        return ListTile(
+            title: Text(
+          pair.asPascalCase,
+          style: _biggerFont,
+        ));
+      });
+      final divided =
+          ListTile.divideTiles(tiles: tiles, context: context).toList();
+
+      return Scaffold(
+        appBar: AppBar(
+          title: Text('saved'),
+        ),
+        body: ListView(children: divided),
+      );
+    }));
   }
 
   Widget _buildSuggestions() {
@@ -84,5 +110,5 @@ class RandomWordsState extends State<RandomWords> {
 
 class RandomWords extends StatefulWidget {
   @override
-  RandomWordsState createState() => RandomWordsState();
+  _RandomWordsState createState() => _RandomWordsState();
 }
